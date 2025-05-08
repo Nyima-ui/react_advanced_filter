@@ -1,35 +1,182 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const pseudoDataForButtons = [
+    { btn: "Bags", onClick: `handleBags`, selected: false },
+    { btn: "Watches", onClick: `handleWatches`, selected: false },
+  ];
+  const pseudodata = [
+    { company: "Prada", category: "Bags", displaying: true },
+    { company: "Gucci", category: "Bags", displaying: true },
+    { company: "Guess", category: "Bags", displaying: true },
+    { company: "Roles", category: "Watches", displaying: true },
+    { company: "Timex", category: "Watches", displaying: true },
+    { company: "Nike", category: "Sports", displaying: true },
+    { company: "Adidas", category: "Sports", displaying: true },
+    { company: "Fila", category: "Sports", displaying: true },
+    { company: "Ray Ban", category: "Sunglasses", displaying: true },
+    { company: "Aldo", category: "Sunglasses", displaying: true },
+    { company: "Polaroid", category: "Sunglasses", displaying: true },
+  ];
+  const [data, setData] = useState(pseudodata);
+  const [categories, setCategories] = useState([]);
+
+  //@disc: function to toggle displaying
+
+  //@disc: handles click event to the category buttons
+  const handleBtnClick = (category) => {
+    console.log(category);
+    const toggledArray = data.map((item) => {
+      if (item.category !== category) {
+        return { ...item, displaying: !item.displaying };
+      }
+      return item;
+    });
+
+    setData(toggledArray);
+    setCategories((prev) => prev.map((item) => {
+      if(item.btn === category){
+        return {...item, selected : !item.selected}
+      }
+      return item; 
+    }))
+  };
+  //utils functions
+  // @disc: returns categories from the data
+  const getCategories = (array) => {
+    const uniqueCategories = new Set();
+    array.forEach((item) => uniqueCategories.add(item.category));
+
+    const categoriesArray = Array.from(uniqueCategories).map((category) => ({
+      btn: category,
+      onclick: () => handleBtnClick(category),
+      selected: false,
+    }));
+
+    setCategories(categoriesArray);
+  };
+  //reusable component
+  //@disc returns a styled button
+  const Button = ({ children, className, onClick }) => {
+    return (
+      <button
+        className={`${className} cursor-pointer px-[0.8rem] py-[0.1rem] border rounded-[0.256rem] transition-all duration-150 ease-in hover:shadow-[3px_3px_1.2px_rgb(0,0,0)] border-zinc-500`}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    );
+  };
+  useEffect(() => {
+    getCategories(pseudodata);
+  }, []);
+  useEffect(() => {
+    console.log(categories);
+  }, [categories]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <section>
+      <div className="flex justify-center my-10 gap-3">
+        {categories.map((item, i) => (
+          <Button key={i} onClick={item.onclick}>
+            {item.btn}
+          </Button>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div className="flex p-3 gap-5 flex-wrap justify-center">
+        {data.map(
+          (item, i) =>
+            item.displaying && (
+              <div
+                className="border py-1 px-2 min-w-[9rem] rounded-sm space-y-2 border-zinc-700"
+                key={i}
+              >
+                <h1 className="text-lg text-gray-600">{item.company}</h1>
+                <p className="text-sm text-gray-600">{item.category}</p>
+              </div>
+            )
+        )}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </section>
+  );
+};
 
-export default App
+export default App;
+
+// import { useState } from "react";
+// import "./App.css";
+// import { useEffect } from "react";
+
+// function App() {
+//   const pseudoData = [
+//     { company: "Prada", category: "Bags", displaying: true },
+//     { company: "Gucci", category: "Bags", displaying: true },
+//     { company: "Guess", category: "Bags", displaying: true },
+//     { company: "Roles", category: "Watches", displaying: true },
+//     { company: "Timex", category: "Watches", displaying: true },
+//     { company: "Nike", category: "Sports", displaying: true },
+//     { company: "Adidas", category: "Sports", displaying: true },
+//     { company: "Fila", category: "Sports", displaying: true },
+//     { company: "Ray Ban", category: "Sunglasses", displaying: true },
+//     { company: "Aldo", category: "Sunglasses", displaying: true },
+//     { company: "Polaroid", category: "Sunglasses", displaying: true },
+//   ];
+//   const [mainData, setMainData] = useState([]);
+//   const [filteredData, setFilteredData] = useState([]);
+
+//   useEffect(() => {
+//     setMainData(pseudoData);
+//   }, []);
+
+//   const toggleFilter = (e) => {
+//     const bags = mainData.filter((item) => item.category === "Bags");
+//     const toggleBags = mainData.map((item) => {
+//       if (item.category !== "Bags") {
+//         return { ...item, displaying: false };
+//       } else {
+//         return item;
+//       }
+//     });
+//     setFilteredData(bags);
+//     console.log(toggleBags);
+//   };
+
+//   const dataToDisplay = filteredData.length > 0 ? filteredData : mainData;
+//   const Button = ({ children, className, onClick }) => {
+//     return (
+//       <button
+//         className={`${className} cursor-pointer px-[0.8rem] py-[0.1rem] border rounded-[0.256rem] transition-all duration-150 ease-in hover:shadow-[3px_3px_1.2px_rgb(0,0,0)] border-zinc-500`}
+//         onClick={onClick}
+//       >
+//         {children}
+//       </button>
+//     );
+//   };
+
+//   return (
+//     <>
+//       <div className="flex justify-center my-10 gap-3">
+//         <Button onClick={toggleFilter}>Bags</Button>
+//         <Button>Watches</Button>
+//         <Button>Sports</Button>
+//         <Button>Sunglasses</Button>
+//       </div>
+
+//       <section className="flex p-3 gap-5 flex-wrap justify-center">
+//         {dataToDisplay.map((item, i) => (
+//           <div
+//             className="border py-1 px-2 min-w-[9rem] rounded-sm space-y-2 border-zinc-700"
+//             key={i}
+//           >
+//             <h1 className="text-lg text-gray-600">{item.company}</h1>
+//             <p className="text-sm text-gray-600">{item.category}</p>
+//           </div>
+//         ))}
+//       </section>
+//     </>
+//   );
+// }
+
+// export default App;
