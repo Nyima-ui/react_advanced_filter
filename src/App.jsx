@@ -27,21 +27,23 @@ const App = () => {
 
   //@disc: handles click event to the category buttons
   const handleBtnClick = (category) => {
-    console.log(category);
-    const toggledArray = data.map((item) => {
-      if (item.category !== category) {
-        return { ...item, displaying: !item.displaying };
-      }
-      return item;
-    });
+    setData((prev) =>
+      prev.map((item) => {
+        if (item.category !== category) {
+          return { ...item, displaying: !item.displaying };
+        }
+        return item;
+      })
+    );
 
-    setData(toggledArray);
-    setCategories((prev) => prev.map((item) => {
-      if(item.btn === category){
-        return {...item, selected : !item.selected}
-      }
-      return item; 
-    }))
+    setCategories((prev) =>
+      prev.map((item) => {
+        if (item.btn === category) {
+          return { ...item, selected: !item.selected };
+        }
+        return item;
+      })
+    );
   };
   //utils functions
   // @disc: returns categories from the data
@@ -72,15 +74,12 @@ const App = () => {
   useEffect(() => {
     getCategories(pseudodata);
   }, []);
-  useEffect(() => {
-    console.log(categories);
-  }, [categories]);
 
   return (
     <section>
       <div className="flex justify-center my-10 gap-3">
         {categories.map((item, i) => (
-          <Button key={i} onClick={item.onclick}>
+          <Button key={i} onClick={item.onclick} className={item.selected ? `bg-black text-white` : `bg-white text-black`}>
             {item.btn}
           </Button>
         ))}
@@ -104,79 +103,3 @@ const App = () => {
 };
 
 export default App;
-
-// import { useState } from "react";
-// import "./App.css";
-// import { useEffect } from "react";
-
-// function App() {
-//   const pseudoData = [
-//     { company: "Prada", category: "Bags", displaying: true },
-//     { company: "Gucci", category: "Bags", displaying: true },
-//     { company: "Guess", category: "Bags", displaying: true },
-//     { company: "Roles", category: "Watches", displaying: true },
-//     { company: "Timex", category: "Watches", displaying: true },
-//     { company: "Nike", category: "Sports", displaying: true },
-//     { company: "Adidas", category: "Sports", displaying: true },
-//     { company: "Fila", category: "Sports", displaying: true },
-//     { company: "Ray Ban", category: "Sunglasses", displaying: true },
-//     { company: "Aldo", category: "Sunglasses", displaying: true },
-//     { company: "Polaroid", category: "Sunglasses", displaying: true },
-//   ];
-//   const [mainData, setMainData] = useState([]);
-//   const [filteredData, setFilteredData] = useState([]);
-
-//   useEffect(() => {
-//     setMainData(pseudoData);
-//   }, []);
-
-//   const toggleFilter = (e) => {
-//     const bags = mainData.filter((item) => item.category === "Bags");
-//     const toggleBags = mainData.map((item) => {
-//       if (item.category !== "Bags") {
-//         return { ...item, displaying: false };
-//       } else {
-//         return item;
-//       }
-//     });
-//     setFilteredData(bags);
-//     console.log(toggleBags);
-//   };
-
-//   const dataToDisplay = filteredData.length > 0 ? filteredData : mainData;
-//   const Button = ({ children, className, onClick }) => {
-//     return (
-//       <button
-//         className={`${className} cursor-pointer px-[0.8rem] py-[0.1rem] border rounded-[0.256rem] transition-all duration-150 ease-in hover:shadow-[3px_3px_1.2px_rgb(0,0,0)] border-zinc-500`}
-//         onClick={onClick}
-//       >
-//         {children}
-//       </button>
-//     );
-//   };
-
-//   return (
-//     <>
-//       <div className="flex justify-center my-10 gap-3">
-//         <Button onClick={toggleFilter}>Bags</Button>
-//         <Button>Watches</Button>
-//         <Button>Sports</Button>
-//         <Button>Sunglasses</Button>
-//       </div>
-
-//       <section className="flex p-3 gap-5 flex-wrap justify-center">
-//         {dataToDisplay.map((item, i) => (
-//           <div
-//             className="border py-1 px-2 min-w-[9rem] rounded-sm space-y-2 border-zinc-700"
-//             key={i}
-//           >
-//             <h1 className="text-lg text-gray-600">{item.company}</h1>
-//             <p className="text-sm text-gray-600">{item.category}</p>
-//           </div>
-//         ))}
-//       </section>
-//     </>
-//   );
-// }
-
-// export default App;
